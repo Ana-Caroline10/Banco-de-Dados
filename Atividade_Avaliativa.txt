@@ -1,0 +1,76 @@
+
+Atividades
+
+
+use Pizzaria_Apple_Rose_Grille;
+
+/* a. Listagem dos 5 pedidos mais caros */
+SELECT TOP 5 valor_total
+FROM tb_pedido
+ORDER BY valor_total DESC;
+
+
+
+
+/* b. Quais os 5 (cinco) ingredientes mais utilizados em pizzas */
+
+SELECT TOP 5 descricao_ingrediente, COUNT (id_sabores_ingredientes) AS Mais_Utilizados
+FROM cad_ingredientes
+INNER JOIN tb_sabores_ingredientes se ON id_ingrediente = ingrediente_id
+GROUP BY descricao_ingrediente
+ORDER BY Mais_Utilizados DESC;
+
+
+
+
+
+
+ /* c. Quais os 5 (cinco) sabores de pizzas mais vendidos */
+
+ SELECT TOP 5 tb_pizza_sabores.sabor_id , MAX(tb_pedido.quantidade) AS total_vendido
+ FROM tb_pedido
+ INNER JOIN tb_pizza_sabores ON tb_pedido.quantidade = tb_pizza_sabores.sabor_id
+ GROUP BY tb_pizza_sabores.sabor_id
+ ORDER BY total_vendido DESC;
+
+
+  /* d. Consulta dos 5 (cinco) melhores clientes */
+  SELECT  TOP 5 cliente_id, Valor_total
+  FROM ( SELECT cliente_id, SUM(valor_total) AS Valor_Total
+ FROM tb_pedido
+  GROUP BY cliente_id) AS Consulta
+  ORDER BY Valor_total DESC;
+
+
+  /* e. Consulta do funcionário do mês (aquele que mais vendeu) */
+
+  SELECT TOP 1 funcionario_id, Valor_Total
+  FROM (
+   SELECT funcionario_id, SUM(valor_total) AS Valor_Total
+   FROM tb_pedido
+  WHERE MONTH(data_compra) = MONTH(GETDATE()) AND YEAR (data_compra) = YEAR (GETDATE())
+  GROUP BY funcionario_id ) AS Funcionario_mes
+  ORDER BY Valor_Total DESC;
+
+ /* f. Quais os 3 (três) produtos (não pizzas) menos vendidos */
+
+
+SELECT TOP  3 tb_itens_pedido.produtos_id , MIN(tb_pedido.quantidade) AS menos_vendido
+ FROM tb_pedido
+ INNER JOIN tb_itens_pedido ON tb_pedido.quantidade = tb_itens_pedido.produtos_id
+ GROUP BY tb_itens_pedido.produtos_id
+ ORDER BY menos_vendido ASC;
+
+
+
+
+
+/*  g. Qual gênero fez mais compras */
+
+
+SELECT sexo, COUNT(*) AS num_compras
+FROM tb_pedido
+INNER JOIN tb_clientes ON tb_pedido.cliente_id = tb_clientes.id_cliente
+GROUP BY sexo
+ORDER BY num_compras DESC;
+

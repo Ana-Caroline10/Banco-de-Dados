@@ -1,0 +1,437 @@
+Atividades_Creates
+
+CREATE DATABASE Pizzaria_Apple_Rose_Grille
+USE Pizzaria_Apple_Rose_Grille;
+
+CREATE TABLE tb_enderecos (
+    id_endereco INT PRIMARY KEY identity,
+    logradouro VARCHAR(100),
+    bairro VARCHAR(50),
+    cidade_id INT,
+    cep VARCHAR(8)
+);
+
+CREATE TABLE cad_cidades (
+    id_cidade INT PRIMARY KEY identity,
+    nome_cidade VARCHAR(50),
+    uf_id INT
+);
+
+CREATE TABLE cad_uf (
+    id_uf INT PRIMARY KEY identity,
+    nome_uf VARCHAR(30),
+    pais_id INT
+);
+
+CREATE TABLE cad_paises (
+    id_pais INT PRIMARY KEY identity,
+    nome_pais VARCHAR(45)
+);
+
+CREATE TABLE tb_funcionarios (
+    id_funcionario INT PRIMARY KEY identity,
+    nome_funcionario VARCHAR(45),
+    cpf VARCHAR(11),
+    matricula VARCHAR(15),
+    senha VARCHAR(256),
+    grupo CHAR(1),
+    motorista VARCHAR(15),
+    validade_motorista DATE,
+    observacao VARCHAR(45),
+    telefone VARCHAR(11),
+    email VARCHAR(45),
+    endereco_id INT,
+    numero VARCHAR(10),
+    complemento VARCHAR(45)
+);
+
+ CREATE TABLE tb_cargo
+(id_cargo INT PRIMARY KEY IDENTITY not null,
+nome_cargo VARCHAR (30),
+salario INT,
+funcionario_id INT
+);
+
+CREATE TABLE tb_clientes (
+    id_cliente INT PRIMARY KEY IDENTITY NOT NULL,
+    nome_cliente VARCHAR(50),
+    cpf VARCHAR(11) UNIQUE,
+    telefone VARCHAR(11),
+    email VARCHAR(45),
+    endereco_id INT,
+    sexo INT,
+    numero VARCHAR(10),
+    complemento VARCHAR(45)
+);
+
+CREATE TABLE cad_ingredientes (
+    id_ingrediente INT PRIMARY KEY  NOT NULL,
+    descricao_ingrediente VARCHAR(100) UNIQUE,
+	
+);
+
+
+CREATE TABLE tb_sabores (
+    id_sabor INT PRIMARY KEY IDENTITY NOT NULL , 
+    descricao_sabor VARCHAR(50) UNIQUE,
+    foto VARBINARY(MAX),
+    categoria CHAR(1),
+    valor_sabor DECIMAL(11,2),
+    tipo CHAR(1),
+	pizzas_id INT
+);
+
+
+
+CREATE TABLE tb_sabores_ingredientes
+(id_sabores_ingredientes INT PRIMARY KEY IDENTITY not null,
+sabor_id INT,
+ingrediente_id INT
+);
+
+
+CREATE TABLE cad_produtos (
+    id_produto INT PRIMARY KEY identity,
+    descricao_produto VARCHAR (45),
+    valor DECIMAL (11,2),
+    tipo CHAR (1),
+    valor_unitaria VARCHAR (20)
+);
+
+CREATE TABLE tb_pizzas
+(id_pizza INT PRIMARY KEY IDENTITY not null,
+tamanho CHAR (3) not null,
+valor_unitario decimal(11,2),
+
+);
+
+create table tb_pizza_sabores (
+id_pizza_sabores INT PRIMARY KEY IDENTITY not null,
+pizza_id INT,
+sabor_id INT
+);
+
+CREATE TABLE tb_pedido
+(id_pedido INT PRIMARY KEY IDENTITY not null,
+cliente_id INT,
+data_compra DATE,
+funcionario_id INT,
+quantidade INT,
+valor_total DECIMAL (11,2)
+);
+
+ CREATE TABLE tb_itens_pedido_pizza
+(id_intens_pedido_pizza INT PRIMARY KEY IDENTITY not null,
+ quantidade INT,
+ pedido_id INT,
+ pizza_id INT
+);
+
+
+CREATE TABLE tb_itens_pedido 
+(id_itens_pedido INT PRIMARY KEY IDENTITY not null,
+valor DECIMAL (11,2),
+quantidade INT,
+produtos_id INT,
+pedido_id INT 
+);
+
+CREATE TABLE tb_controle_pagamentos
+(id_controle_pagamentos INT PRIMARY KEY IDENTITY not null,
+descricao VARCHAR (30) not null,
+pedido_id INT 
+);
+
+/* ALTER TABLE */
+
+ALTER TABLE tb_itens_pedido_pizza ADD CONSTRAINT FK_pedidos_itens_pizza
+FOREIGN KEY (pizza_id)
+REFERENCES tb_pizzas (id_pizza);
+
+ALTER TABLE tb_pedido ADD CONSTRAINT FK_pedido_funcionario
+FOREIGN KEY (funcionario_id)
+REFERENCES tb_funcionarios (id_funcionario);
+
+ALTER TABLE tb_controle_pagamentos ADD CONSTRAINT  FK_controle_pagamentos_pedido
+FOREIGN KEY (pedido_id)
+REFERENCES tb_pedido (id_pedido);
+
+ALTER TABLE tb_pedido ADD CONSTRAINT FK_pedido_cliente
+FOREIGN KEY (cliente_id)
+REFERENCES tb_clientes (id_cliente);
+
+ALTER TABLE tb_itens_pedido_pizza ADD CONSTRAINT FK_itens_pizza_pedido
+FOREIGN KEY (pedido_id)
+REFERENCES tb_pedido (id_pedido);
+
+
+ALTER TABLE tb_itens_pedido ADD CONSTRAINT FK_pedido_itens_pedido
+FOREIGN KEY (pedido_id)
+REFERENCES tb_pedido (id_pedido);
+
+ALTER TABLE tb_itens_pedido ADD CONSTRAINT FK_Itens_pedido_produto
+FOREIGN KEY (produtos_id)
+REFERENCES cad_produtos (id_produto);
+
+ALTER TABLE tb_enderecos ADD CONSTRAINT FK_endereco_cidade
+FOREIGN KEY (cidade_id)
+REFERENCES cad_cidades(id_cidade);
+
+ALTER TABLE cad_cidades ADD CONSTRAINT FK_cidade_uf
+FOREIGN KEY (uf_id)
+REFERENCES cad_uf (id_uf);
+
+ALTER TABLE cad_uf ADD CONSTRAINT FK_uf_pais
+FOREIGN KEY (pais_id)
+REFERENCES cad_paises (id_pais);
+
+ALTER TABLE tb_funcionarios ADD CONSTRAINT FK_funcionario_endereco
+FOREIGN KEY (endereco_id)
+REFERENCES tb_enderecos (id_endereco);
+
+ALTER TABLE tb_clientes ADD CONSTRAINT FK_cliente_endereco
+FOREIGN KEY (endereco_id)
+REFERENCES tb_enderecos (id_endereco);
+
+ALTER TABLE tb_cargo ADD CONSTRAINT FK_cargo_funcionario
+FOREIGN KEY (funcionario_id)
+REFERENCES tb_funcionarios (id_funcionario);
+
+ALTER TABLE tb_sabores_ingredientes ADD CONSTRAINT FK_itens_ingredientes
+FOREIGN KEY (ingrediente_id)
+REFERENCES cad_ingredientes (id_ingrediente);
+
+ALTER TABLE tb_sabores_ingredientes ADD CONSTRAINT FK_iten_sabor
+FOREIGN KEY (sabor_id)
+REFERENCES tb_sabores (id_sabor);
+
+ALTER TABLE tb_sabores ADD CONSTRAINT FK_pizzas_sabores
+FOREIGN KEY (pizzas_id)
+REFERENCES tb_pizzas (id_pizza);
+
+/* INSERT INTO */
+
+INSERT INTO tb_funcionarios
+(nome_funcionario,cpf, endereco_id)
+VALUES
+('Maria Claúdia', 12345678998, 2) ,
+('Fabricio', 22344566789, 1),
+('Julia', 00100200300, 3),
+('Murilo', 78998775384, 4),
+('Nathalia',45678912300, 5);
+
+INSERT INTO tb_cargo
+(nome_cargo, salario, funcionario_id)
+VALUES 
+('Cozinheria', 2560, 1),
+('Entregador', 2350, 4),
+('Atendente', 2345,  5),
+('Auxiliar de cozinha', 2450, 3),
+('Garçom', 2450, 2);
+
+INSERT INTO tb_clientes
+(nome_cliente, cpf, sexo, endereco_id)
+VALUES
+('Antonella', 00300400506, 1,2),
+('Gean', 74185296300, 2, 1),
+('Juliete', 55584499748, 1, 4),
+('Giovana',33325541631, 1, 3),
+('Ricardo', 74158629351, 2, 5),
+('Vitor', 22354789513, 2, 6 );
+
+INSERT INTO tb_controle_pagamentos
+(descricao, pedido_id)
+VALUES
+('pix', 1),
+('cartão_débito', 3),
+('cartão_crédito', 2),
+('dinheiro', 1),
+('pix', 3);
+
+INSERT INTO cad_paises
+(nome_pais) 
+VALUES 
+('Brasil');
+
+INSERT INTO cad_uf 
+(nome_uf, pais_id) 
+VALUES 
+('Santa Catarina', 1);
+
+INSERT INTO cad_cidades 
+(nome_cidade, uf_id)
+VALUES ('Lages', 1), 
+('Sao Joaquim', 1),
+('Urubici', 1), 
+('Florianópolis', 1);
+
+INSERT INTO tb_enderecos 
+(logradouro, bairro, cidade_id, cep) 
+VALUES
+('Rua Correia Pinto', 'Centro', 1, '88500000'),
+('Rua Verdes Campos', 'Coral', 1, '88500000'),
+('Rua Coronel Córdova', 'Centro', 3, '89000000'),
+('Rua do centro', 'Centro', 2, '87000000'),
+('Av. Belisário Ramos', 'Centro', 1, '88500000'),
+('Rua 31 de março', 'Guarujá', 1, '88500000');
+
+
+INSERT INTO cad_ingredientes 
+(id_ingrediente, descricao_ingrediente) 
+VALUES
+(1, 'Queijo muzzarela'),
+(2, 'Queijo parmesão'),
+(3, 'Queijo gorgonzola'),
+(4, 'Azeitona'), 
+(5, 'Milho'),
+(6, 'Frango'),
+(7, 'Filezinho'),
+(8, 'Batata palha'),
+(9, 'Calabresa'),
+(10,'Tomate'),
+(11, 'Brócolis'),
+(12, 'Bacon'),
+(13, 'Presunto'),
+(14, 'Lombinho'),
+(15, 'Ovo'),
+(16, 'Peito de peru'),
+(17, 'Chocolate'),
+(18, 'Bombom'),
+(19, 'Morango'),
+(20, 'Salmão'),
+(21, 'Queijo catupiry');
+
+INSERT INTO tb_sabores (descricao_sabor, categoria, valor_sabor, tipo)
+VALUES ('Sabor calabresa', 'N', 30, 'S'),
+('Sabor Catuperu', 'N', 35, 'S'), 
+('Sabor Frango', 'N', 30, 'S'),
+('Sabor sensação', 'N', 35, 'D'),
+('Sabor bombom', 'N', 35, 'D'), 
+('Sabor Romana', 'N', 25, 'S'), 
+('Sabor Salmão', 'E', 45, 'S'),
+('Sabor brócolis com bacon', 'N', 35, 'S'),
+('Sabor bacon', 'N', 30, 'S');
+
+INSERT INTO tb_sabores_ingredientes
+(ingrediente_id, sabor_id)
+VALUES 
+(10,1);  /*#calabresa*/
+INSERT INTO tb_sabores_ingredientes
+(ingrediente_id, sabor_id) 
+VALUES
+(1,1);
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id) 
+VALUES 
+(21,2);  /*#catuperu*/
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id) 
+VALUES
+(16,2);
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id)
+VALUES
+(1,3);   /*#frango*/
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id)
+VALUES 
+(6,3);
+INSERT INTO tb_sabores_ingredientes
+(ingrediente_id, sabor_id)
+VALUES
+(17,4);  /*#sensação*/
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id)
+VALUES 
+(19,4);
+INSERT INTO tb_sabores_ingredientes 
+(ingrediente_id, sabor_id)
+VALUES 
+(17,5);  /*#bombom*/
+INSERT INTO tb_sabores_ingredientes
+(ingrediente_id, sabor_id)
+VALUES
+(18,5);
+INSERT INTO tb_sabores_ingredientes
+(ingrediente_id, sabor_id) 
+VALUES
+(1,6);  
+
+INSERT INTO cad_produtos
+(descricao_produto, valor)
+VALUES 
+('Refrigerante', 6),
+('Cerveja', 10),
+('Cerveja premium', 12),
+('Água mineral', 4),
+('Suco integral', 9),
+('Taça de Vinho', 15),
+('Caipirinha', 15),
+('Chocolate', 5);
+
+
+INSERT INTO tb_pizzas
+(tamanho, valor_unitario)
+VALUES 
+('G', 45),
+('M', 35),
+('GG', 55),
+('P', 25),
+('XG', 70),
+('XXG', 85);
+
+
+INSERT INTO tb_pizza_sabores
+(pizza_id,sabor_id)
+VALUES
+(1,2),
+(3,9),
+(2,4),
+(5,7),
+(4,5),
+(6,8),
+(2,3),
+(6,1);
+
+
+INSERT INTO tb_pedido
+(cliente_id, data_compra, funcionario_id, quantidade, valor_total)
+VALUES
+(1, '2023-05-04', 5, 2, 170),
+(3, '2023-10-10', 2, 1, 121),
+(2, '2023-11-09', 2, 1, 100),
+(4, '2023-04-06', 1, 1, 220),
+(5, '2022-12-13', 3, 4, 420),
+(6, '2022-12-24', 4, 2, 170),
+(2, '2023-11-04', 5, 2, 316),
+(6, '2023-11-04', 2, 1, 60),
+(5, '2023-07-14', 5, 2, 110),
+(3, '2023-10-18', 2, 3, 450);
+
+INSERT INTO tb_itens_pedido
+(valor, quantidade, produtos_id, pedido_id)
+VALUES
+(15,1, 7, 8),
+(5, 2, 8, 4),
+(12, 3, 3, 2),
+(15, 2, 6, 3),
+(6, 5, 1, 1),
+(15, 1, 7, 5),
+(6, 3, 1, 7),
+(15, 1, 7, 6),
+(15, 4, 7, 10),
+(6, 5, 1, 9);
+
+INSERT INTO tb_itens_pedido_pizza
+(quantidade, pedido_id, pizza_id)
+VALUES
+(1, 1, 3),
+(2, 3, 2),
+(2, 5, 1),
+(2, 7, 5),
+(1, 9, 4),
+(1, 2, 6),
+(3, 4, 5),
+(2, 6, 2),
+(1, 8, 1),
+(2, 10, 1);

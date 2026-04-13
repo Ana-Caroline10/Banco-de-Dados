@@ -1,0 +1,5 @@
+SELECT TOP  3 tb_itens_pedido.produto_id , MIN(tb_pedido.quantidade) AS menos_vendido
+ FROM tb_pedido
+ INNER JOIN tb_itens_pedido ON tb_pedido.quantidade = tb_itens_pedido.produto_id
+ GROUP BY tb_itens_pedido.produto_id
+ ORDER BY menos_vendido DESC;
